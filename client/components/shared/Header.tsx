@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileText, Menu, Sparkles, X } from "lucide-react";
 import { useState } from "react";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 
@@ -21,19 +22,21 @@ export default function Header() {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-6 text-sm">
-          <a href="#" className="hover:text-primary transition">
+          <a href="#features" className="hover:text-primary transition">
             Features
           </a>
-          <a href="#" className="hover:text-primary transition">
+          <a href="#pricing" className="hover:text-primary transition">
             Pricing
           </a>
           <a href="#" className="hover:text-primary transition">
-            Docs
+            Testimonials
           </a>
         </div>
 
         {/* Actions */}
         <div className="hidden md:flex items-center gap-2">
+          <ThemeSwitcher />
+
           {/* Signed Out */}
           <Show when={"signed-out"}>
             <SignInButton mode="modal">
@@ -47,32 +50,38 @@ export default function Header() {
 
           {/* Signed In */}
           <Show when={"signed-in"}>
-            <Button className="gap-2">
-              <FileText className="w-4 h-4" />
-              Upload PDF
-            </Button>
-
             <UserButton afterSwitchSessionUrl="/" />
           </Show>
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden" onClick={() => setOpen(!open)}>
-          {open ? <X /> : <Menu />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeSwitcher />
+          <button onClick={() => setOpen(!open)}>
+            {open ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       {open && (
         <div className="md:hidden px-4 pb-4 space-y-3 border-t">
-          <a href="#" className="block text-sm">
+          <a
+            href="#features"
+            className="block text-sm"
+            onClick={() => setOpen(false)}
+          >
             Features
           </a>
-          <a href="#" className="block text-sm">
+          <a
+            href="#pricing"
+            className="block text-sm"
+            onClick={() => setOpen(false)}
+          >
             Pricing
           </a>
-          <a href="#" className="block text-sm">
-            Docs
+          <a href="#" className="block text-sm" onClick={() => setOpen(false)}>
+            Testimonials
           </a>
 
           {/* Mobile Auth */}

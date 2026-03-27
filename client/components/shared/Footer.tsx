@@ -22,18 +22,18 @@ export default function Footer() {
             <h4 className="font-medium mb-3">Product</h4>
             <ul className="space-y-2 text-muted-foreground">
               <li>
-                <a href="#" className="hover:text-primary">
+                <a href="#features" className="hover:text-primary">
                   Features
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary">
+                <a href="#pricing" className="hover:text-primary">
                   Pricing
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-primary">
-                  Docs
+                  Testimonials
                 </a>
               </li>
             </ul>

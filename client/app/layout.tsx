@@ -4,9 +4,15 @@ import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/shared/Footer";
+import { ThemeProvider } from "@/components/shared/ThemeProvider";
 
 const latoSans = Lato({
-  variable: "--font-lato-sans",
+  variable: "--font-sans",
+  weight: ["100", "300", "400", "700", "900"],
+  subsets: ["latin"],
+});
+const latoMono = Lato({
+  variable: "--font-mono",
   weight: ["100", "300", "400", "700", "900"],
   subsets: ["latin"],
 });
@@ -24,11 +30,22 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${latoSans.variable}  h-full antialiased`}>
+      <html
+        lang="en"
+        className={`${latoSans.variable} ${latoMono.variable}  h-full antialiased`}
+        suppressHydrationWarning
+      >
         <body className="min-h-full flex flex-col">
-          <Header />
-          {children}
-          <Footer />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header />
+            {children}
+            <Footer />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
