@@ -1,5 +1,4 @@
 import { SignIn } from "@clerk/nextjs";
-import "@/styles/custom_clerk_styles.css";
 
 const SignInPage = () => {
   return (

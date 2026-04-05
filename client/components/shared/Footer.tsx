@@ -5,7 +5,7 @@ import { Heart } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t bg-background/80 backdrop-blur">
+    <footer className="w-full border-t border-border bg-background/80 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
         {/* Top Section */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
@@ -80,7 +80,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-t pt-6 text-sm text-muted-foreground">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-t border-border pt-6 text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} StudyPal. All rights reserved.</p>
 
           {/* Credit */}

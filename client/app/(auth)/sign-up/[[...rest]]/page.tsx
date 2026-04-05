@@ -1,7 +1,6 @@
-import { SignIn, SignUp } from "@clerk/nextjs";
-import "@/styles/custom_clerk_styles.css";
+import { SignUp } from "@clerk/nextjs";
 
-const SignInPage = () => {
+const SignUpPage = () => {
   return (
     <main className="flex justify-center items-center min-h-screen w-full">
       <SignUp />
@@ -9,4 +8,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default SignUpPage;
