@@ -1,10 +1,9 @@
-import Header from "@/components/shared/Header";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/shared/Footer";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const latoSans = Lato({
   variable: "--font-sans",
@@ -42,9 +41,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Header />
-            {children}
-            <Footer />
+            <TooltipProvider>{children}</TooltipProvider>
           </ThemeProvider>
         </body>
       </html>
