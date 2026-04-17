@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import { pdfQueue } from "../config/queues";
+import prisma from "../config/prisma";
 
 const uploadPdf: RequestHandler = async (req, res) => {
   try {
@@ -16,19 +17,21 @@ const uploadPdf: RequestHandler = async (req, res) => {
       }),
     );
 
-    // await prisma.uploads.create({
-    //   data: {
-    //     filename: req.file.filename,
-    //     path: req.file.path,
-    //     mimetype: req.file.mimetype,
-    //     size: req.file.size,
-    //     originalName: req.file.originalname,
-    //   },
-    // });
-
     // create a new chat and return its id
+    const newChat = await prisma.chat.create({
+      data: {
+        userId: req.userId as string,
+        isReady: false,
+        linkedFilename: req.file.filename,
+        linkedFilePath: req.file.path,
+        linkedFileSize: req.file.size,
+      },
+    });
 
-    return res.status(200).json({ message: "File Uploaded and Queued" });
+    return res.status(200).json({
+      message: "File Uploaded and Queued for processing.",
+      id: newChat.id,
+    });
   } catch (error: unknown) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });

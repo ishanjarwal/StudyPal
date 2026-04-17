@@ -1,84 +1,125 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
-import { MessageSquarePlus, Sparkles, FileUp, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { PDFUploader } from "@/components/chat/PDFUploader";
+import { env } from "@/config/env";
+import { formatValidationErrorsToHTML } from "@/lib/utils";
+import { useAuth } from "@clerk/nextjs";
+import { Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
-const DashboardPage = () => {
-  const { user } = useUser();
+const NewChatPage = () => {
+  const router = useRouter();
+
+  const { getToken } = useAuth();
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // send the file to the server
+  const handleFileSelect = async (file: File | null) => {
+    if (!file) return;
+
+    const token = await getToken();
+    if (!token) {
+      toast.error("Authentication failed");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("pdf", file);
+
+    const toastId = toast.loading("Uploading PDF...");
+
+    try {
+      const response = await fetch(
+        env.NEXT_PUBLIC_SERVER_HOST_BASE_URL + "/pdf-upload",
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+      console.log(data);
+
+      if (!response.ok) {
+        if (data.code === "validation_error" && data.errors.length > 0) {
+          toast.error(
+            <div
+              dangerouslySetInnerHTML={{
+                __html: formatValidationErrorsToHTML(data.errors),
+              }}
+            />,
+            { id: toastId },
+          );
+          return;
+        }
+
+        if (data.message) {
+          throw new Error(data.message);
+        } else {
+          throw new Error("Something went wrong. Please try again later");
+        }
+      }
+
+      const id = data.id as string;
+
+      toast.success(data.message || "PDF Uploaded Successfully", {
+        id: toastId,
+      });
+
+      timeoutRef.current = setTimeout(() => {
+        router.push(`/dashboard/chat/${id}`);
+      }, 1500);
+    } catch (error: unknown) {
+      console.error(error);
+
+      if (error instanceof Error) {
+        toast.error(error.message, { id: toastId });
+      } else {
+        toast.error("Something went wrong. Please try again later.", {
+          id: toastId,
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   return (
-    <div className="flex flex-col gap-8 max-w-5xl mx-auto py-4">
-      {/* Welcome Header */}
-      <div className="space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">
-          Welcome back, <span className="text-primary">{user?.firstName || "there"}</span>! 👋
-        </h2>
-        <p className="text-muted-foreground text-lg">
-          What would you like to study today? Upload a PDF or continue a previous conversation.
-        </p>
-      </div>
+    <div className="relative flex flex-col h-[calc(100vh-10rem)] w-full max-w-5xl mx-auto">
+      {/* Background Decorative Element */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 h-[500px] w-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Quick Actions Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <button className="group relative flex flex-col items-center justify-center gap-4 p-8 rounded-3xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-300">
-          <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <FileUp className="h-6 w-6 text-primary" />
-          </div>
-          <div className="text-center">
-            <span className="block font-semibold text-lg">Upload PDF</span>
-            <span className="text-sm text-muted-foreground">Start a new study session</span>
-          </div>
-          <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-          </div>
-        </button>
-
-        <button className="group relative flex flex-col items-center justify-center gap-4 p-8 rounded-3xl border-2 border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-300">
-          <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <MessageSquarePlus className="h-6 w-6 text-primary" />
-          </div>
-          <div className="text-center">
-            <span className="block font-semibold text-lg">New Chat</span>
-            <span className="text-sm text-muted-foreground">Ask anything about your docs</span>
-          </div>
-        </button>
-
-        <div className="relative flex flex-col items-center justify-center gap-4 p-8 rounded-3xl border border-border bg-accent/30 overflow-hidden">
-          <div className="absolute -right-8 -top-8 h-24 w-24 bg-primary/10 rounded-full blur-3xl" />
-          <div className="h-12 w-12 rounded-2xl bg-primary/20 flex items-center justify-center">
-            <Zap className="h-6 w-6 text-primary" />
-          </div>
-          <div className="text-center">
-            <span className="block font-semibold text-lg">Pro Benefits</span>
-            <span className="text-sm text-muted-foreground">Unlimited uploads & GPT-4o</span>
-          </div>
-          <Button size="sm" variant="secondary" className="mt-2 rounded-xl">
-            Upgrade
-          </Button>
-        </div>
-      </div>
-
-      {/* Main Content Area Placeholder */}
-      <div className="min-h-[400px] w-full rounded-[2rem] border-2 border-dashed border-border flex flex-col items-center justify-center bg-muted/20 relative group overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--primary)_0%,transparent_70%)] opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none" />
-        <div className="flex flex-col items-center gap-6 text-center max-w-sm px-6">
-          <div className="h-20 w-20 rounded-full bg-border/50 flex items-center justify-center">
-            <Sparkles className="h-10 w-10 text-muted-foreground/30" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-xl font-semibold">Your Study Arena</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Once you start a chat or select a media file, the interactive interface will appear here. No active session yet.
+      {/* Middle Content Area */}
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-8 w-full animate-in fade-in zoom-in-95 duration-700">
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/5 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase mb-4 shadow-sm animate-pulse">
+              <Sparkles className="h-3 w-3 mr-2" />
+              AI-Powered Learning
+            </div>
+            <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
+              Ready to <span className="text-primary italic">Ace</span> It?
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-md mx-auto">
+              Transform any PDF into an interactive tutor. Upload below to begin
+              your personalized study session.
             </p>
           </div>
-          <Button variant="outline" className="rounded-2xl border-primary/20 hover:bg-primary/5">
-            Quick Start Tour
-          </Button>
+          <PDFUploader onFileSelect={handleFileSelect} />
         </div>
       </div>
     </div>
   );
 };
 
-export default DashboardPage;
+export default NewChatPage;
