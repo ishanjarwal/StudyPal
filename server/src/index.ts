@@ -4,6 +4,7 @@ import express from "express";
 import uploadPdf from "./controllers/uploadPdf";
 import handlePDFUpload from "./middlewares/handlePDFUpload";
 import { handleValidationErrors } from "./middlewares/handleValidationErrors";
+import { requireAuth } from "./middlewares/requireAuth";
 
 // Config ENV
 dotenv.config();
@@ -20,7 +21,13 @@ app.get("/", (req, res) => {
   res.send("Simple Express server with TS");
 });
 
-app.post("/pdf-upload", handlePDFUpload(), handleValidationErrors, uploadPdf);
+app.post(
+  "/pdf-upload",
+  requireAuth,
+  handlePDFUpload(),
+  handleValidationErrors,
+  uploadPdf,
+);
 
 // Start Server
 app.listen(PORT, () => {

@@ -13,6 +13,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@clerk/backend": "^3.2.12",
+    "@langchain/community": "^1.1.27",
+    "@langchain/core": "^1.1.39",
+    "@langchain/openai": "^1.4.4",
+    "@langchain/qdrant": "^1.0.1",
+    "@langchain/textsplitters": "^1.0.1",
     "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.6.0",
     "bullmq": "^5.73.4",
@@ -20,7 +26,8 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-validator": "^7.3.2",
-    "multer": "^2.1.1"
+    "multer": "^2.1.1",
+    "pdf-parse": "^2.4.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
