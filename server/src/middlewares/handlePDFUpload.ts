@@ -13,7 +13,7 @@ const handlePDFUpload = (): RequestHandler => {
     },
     filename: function (req, file, cb) {
       const prefix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      cb(null, prefix + file.originalname);
+      cb(null, prefix + ".pdf");
     },
   });
 
