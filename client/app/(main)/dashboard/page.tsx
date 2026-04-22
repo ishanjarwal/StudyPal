@@ -15,6 +15,7 @@ const NewChatPage = () => {
   const { getToken } = useAuth();
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const toastId = "handlefileselectiontoast";
 
   // send the file to the server
   const handleFileSelect = async (file: File | null) => {
@@ -29,7 +30,7 @@ const NewChatPage = () => {
     const formData = new FormData();
     formData.append("pdf", file);
 
-    const toastId = toast.loading("Uploading PDF...");
+    toast.loading("Uploading PDF...", { id: toastId });
 
     try {
       const response = await fetch(
@@ -85,12 +86,14 @@ const NewChatPage = () => {
           id: toastId,
         });
       }
+    } finally {
     }
   };
 
   useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      toast.dismiss(toastId);
     };
   }, []);
 

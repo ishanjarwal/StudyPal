@@ -25,6 +25,7 @@ const uploadPdf: RequestHandler = async (req, res) => {
         linkedFilename: req.file.filename,
         linkedFilePath: req.file.path,
         linkedFileSize: req.file.size,
+        linkedFileOriginalName: req.file.originalname,
       },
     });
 
