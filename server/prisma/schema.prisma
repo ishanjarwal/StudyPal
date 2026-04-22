@@ -11,9 +11,10 @@ model Chat {
   id     String @id @default(cuid())
   userId String
 
-  linkedFilename String
-  linkedFilePath String
-  linkedFileSize Int
+  linkedFileOriginalName String
+  linkedFilename         String
+  linkedFilePath         String
+  linkedFileSize         Int
 
   isReady Boolean @default(false)
 

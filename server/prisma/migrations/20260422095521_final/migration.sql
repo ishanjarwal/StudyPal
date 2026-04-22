@@ -5,6 +5,7 @@ CREATE TYPE "Role" AS ENUM ('USER', 'ASSISTANT');
 CREATE TABLE "chats" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "linkedFileOriginalName" TEXT NOT NULL,
     "linkedFilename" TEXT NOT NULL,
     "linkedFilePath" TEXT NOT NULL,
     "linkedFileSize" INTEGER NOT NULL,
