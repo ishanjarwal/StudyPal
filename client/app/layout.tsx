@@ -4,7 +4,7 @@ import { Lato } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/providers/ToasterProvider";
 
 const latoSans = Lato({
   variable: "--font-sans",
@@ -44,7 +44,7 @@ export default function RootLayout({
           >
             <TooltipProvider>
               {children}
-              <Toaster position="top-center" richColors />
+              <Toaster />
             </TooltipProvider>
           </ThemeProvider>
         </body>
